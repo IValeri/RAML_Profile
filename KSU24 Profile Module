@@ -1,0 +1,137 @@
+#%RAML 1.0
+title: KSU24 Profile Module 
+version: 1.0
+baseUri: https://ksu24.kspu.edu/api
+
+mediaType: application/json
+
+types:
+  ErrorResponse:
+    type: object
+    properties:
+      error: string
+      code: integer
+
+  User:
+    type: object
+    properties:
+      id: integer
+      name: string
+      email: string
+      phone: string
+      location: string
+
+  Document:
+    type: object
+    properties:
+      id: integer
+      name: string
+      type: string
+      url: string
+
+/profile:
+  description: Profile management module
+  
+  get:
+    description: Retrieve user profile information
+    responses:
+      200:
+        body:
+          application/json:
+            type: User
+      401:
+        body:
+          application/json:
+            type: ErrorResponse
+
+  /documents:
+    post:
+      description: Upload documents to the profile
+      body:
+        multipart/form-data:
+          properties:
+            file:
+              type: file
+              description: Document to upload
+      responses:
+        201:
+          body:
+            application/json:
+              type: Document
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+
+  /diya:
+    post:
+      description: Share documents from Diya
+      body:
+        application/json:
+          type: object
+          properties:
+            documentId: integer
+            recipient: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: string
+              example: "Document shared successfully"
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+
+  /bot-assistant:
+    get:
+      description: Get the Telegram bot link for registration
+      responses:
+        200:
+          body:
+            application/json:
+              type: object
+              properties:
+                botLink: string
+              example:
+                botLink: "https://t.me/ksu24_quality_survey"
+
+  /location:
+    patch:
+      description: Update user location
+      body:
+        application/json:
+          type: object
+          properties:
+            latitude: number
+            longitude: number
+      responses:
+        200:
+          body:
+            application/json:
+              type: string
+              example: "Location updated successfully"
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
+
+  /contacts:
+    patch:
+      description: Validate and update user contacts
+      body:
+        application/json:
+          type: object
+          properties:
+            fieldName: string
+            value: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: string
+              example: "Field updated successfully"
+        400:
+          body:
+            application/json:
+              type: ErrorResponse
